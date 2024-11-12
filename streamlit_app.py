@@ -1,30 +1,39 @@
 import requests
 import streamlit as st
 
-API_URL = "http://192.168.56.1:5555"
-st.markdown("# :rainbow[Llama Chatbot RAG]")
-
+API_URL = "http://192.168.56.1:2206"
+st.markdown("# :rainbow[Chatbot RAG-E v1]")
 
 # Chatbot PART
-st.sidebar.subheader("Chọn chatbot")
+st.sidebar.header("Chatbot")
 selected_bot = st.sidebar.selectbox("Select chatbot:", 
                                     options=["Chatbot Basic", "Chatbot RAG"],
                                     label_visibility="collapsed")
 
-st.sidebar.header("")
+if selected_bot == "Chatbot RAG":
+    st.sidebar.subheader("Threshold")
+    threshold = st.sidebar.slider(
+        "Độ giới hạn kiến thức retrieval:", 
+        min_value=0.0, max_value=5.0, value=1.0, step=0.2,
+    )       
 
-st.sidebar.subheader("Chọn giá trị Threshold")
-threshold = st.sidebar.text_input("Giới hạn kiến thức retrieval:", 
-                                  value=0.9)       
+    st.sidebar.subheader("Temperature")
+    temperature = st.sidebar.slider(
+        "Độ sáng tạo của Bot:", 
+        min_value=0.0, max_value=1.0, value=0.5, step=0.1,
+    )
+else:
+    threshold = 0.8
+    st.sidebar.subheader("Temperature")
+    temperature = st.sidebar.slider(
+        "Độ sáng tạo của Bot:", 
+        min_value=0.0, max_value=1.0, value=0.5, step=0.1,
+    )
 
-st.sidebar.header("")
-
-st.sidebar.subheader("Chọn giá trị Temperature")
-temperature = st.sidebar.slider("Select temperature:", 
-                                min_value=0.0, max_value=1.0, value=0.3, step=0.1,
-                                label_visibility="collapsed")
-
-query_text = st.text_area("Nhập câu hỏi của bạn:",height=150)
+query_text = st.text_area("Nhập câu hỏi của bạn:",
+                          height=150,
+                          placeholder="Nhập câu hỏi của bạn vào đây...",
+                          label_visibility="collapsed")
 
 if st.button("Send"):
     if query_text:
@@ -54,15 +63,16 @@ if st.button("Send"):
 
 # Upsert PART
 st.sidebar.header("")
-st.sidebar.subheader("Chọn loại tài liệu")
+st.sidebar.subheader("Upsert Document")
 selected_document = st.sidebar.selectbox("Chọn thể loại document muốn upsert:", 
                                     options=["Văn bản", 
                                              "Thơ"])
 
-st.header("Upsert dữ liệu")
-st.subheader("Nhập dữ liệu text")
+st.header("")
+st.header("Upsert text")
 input_text = st.text_area("Enter here:", 
                           value="Tôi tên là Trọng, Hiện tôi đã tốt nghiệp trường Đại học Khoa học và Công nghệ Hà Nội với tấm bằng loại khá. Tôi rất thích học lập trình và đang theo đuổi chuyên ngành AI Engineer, tôi rất đam mê làm việc với NLP và mong muốn tìm một công việc liên quan đến nó.",
+                          placeholder="Nhập text cần upsert vào đây...",
                           label_visibility="collapsed")
 
 if st.button("Upsert text"):
@@ -80,7 +90,7 @@ if st.button("Upsert text"):
         st.write("Vui lòng nhập đầy đủ thông tin.")
 
 
-st.subheader("Upload file dữ liệu")
+st.header("Upsert file")
 uploaded_file = st.file_uploader("Drag file pdf here:", 
                                 type=["pdf"],
                                 label_visibility="collapsed")
@@ -99,9 +109,10 @@ if st.button("Upsert file"):
 
 # Delete Index PART
 st.sidebar.header("")
-st.sidebar.header("Xoá Index")
+st.sidebar.header("Delete Index")
 index_to_delete = st.sidebar.text_input("Nhập tên index để xoá:",
-                                        value="text_embeddings",)
+                                        
+                                        placeholder='text_embeddings')
 if st.sidebar.button("Xoá Index"):
     if index_to_delete:
         response = requests.delete(

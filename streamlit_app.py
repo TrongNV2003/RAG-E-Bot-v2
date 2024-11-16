@@ -1,10 +1,15 @@
 import requests
 import streamlit as st
+from configs.yaml_loader import load_config
 
-API_URL = "http://192.168.56.1:2206"
-st.markdown("# :rainbow[Chatbot RAG-E v1]")
+config = load_config("settings/config.yaml")
+
+API_URL = config["app"]["host"]
+
 
 # Chatbot PART
+
+st.markdown("# :rainbow[Chatbot RAG-E v1]")
 st.sidebar.header("Chatbot")
 selected_bot = st.sidebar.selectbox("Select chatbot:", 
                                     options=["Chatbot Basic", "Chatbot RAG"],
@@ -80,7 +85,7 @@ if st.button("Upsert text"):
         with st.spinner("Đang xử lý..."):
             response = requests.post(
                 f"{API_URL}/upsert-text",
-                json={"index_name": "text_embeddings", "text_input": input_text}
+                json={"index_name": config["elasticsearch"]["index_name"], "text_input": input_text}
             )
             if response.status_code == 200:
                 st.write("Dữ liệu đã được upsert thành công.")

@@ -1,16 +1,19 @@
 import uuid
 import logging
 import traceback
-from schemas.schemas import InputText, DocumentTypes
 from fastapi.routing import APIRouter
 from fastapi.responses import JSONResponse
+from configs.yaml_loader import load_config
+from schemas.schemas import InputText, DocumentTypes
 from fastapi import UploadFile, File, status, Request
 from db.elasticsearch.operations import ElasticsearchProvider
 
 router = APIRouter()
 logger = logging.getLogger()
 elastic_provider = ElasticsearchProvider()
-    
+
+config = load_config("settings/config.yaml")
+
 """
 upsert docs
 """
@@ -33,7 +36,7 @@ async def upsert_labels(request: Request, input: InputText):
                 status_code=status.HTTP_404_NOT_FOUND
             )
         text = input.text_input
-        elastic_provider.upsert_from_text(text, index_name = "text_embeddings")
+        elastic_provider.upsert_from_text(text, index_name = config["elasticsearch"]["index_name"])
 
         return {"message": "Labels upserted successfully from file"}
 
@@ -73,7 +76,7 @@ async def upsert_labels_by_file(request: Request, doc_type: str, file_path: Uplo
                 status_code=status.HTTP_404_NOT_FOUND
             )
             
-        elastic_provider.upsert_from_files(file_bytes, doc_type, index_name = "text_embeddings")
+        elastic_provider.upsert_from_files(file_bytes, doc_type, index_name=config["elasticsearch"]["index_name"])
 
         return {"message": "Labels upserted successfully from file"}
 

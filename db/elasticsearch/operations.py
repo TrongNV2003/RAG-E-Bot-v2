@@ -5,11 +5,13 @@ from enum import Enum
 from pydantic import BaseModel
 from typing import Optional, Any
 from fastapi.responses import JSONResponse
+from configs.yaml_loader import load_config
 from db.elasticsearch.connector import connect_db
 from embedding_models.operations import EmbeddingModel
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 model = EmbeddingModel()
+config = load_config("settings/config.yaml")
 
 class ElasticsearchProvider:
     def __init__(self) -> None:
@@ -129,7 +131,7 @@ class ElasticsearchProvider:
     
     
     def retrieval(self, query_body, threshold):
-        results = self.client.search(index="text_embeddings", body=query_body)
+        results = self.client.search(index=config["elasticsearch"]["index_name"], body=query_body)
 
         if not results['hits']['hits']:
             return {"message": "No labels found for the given document type."}

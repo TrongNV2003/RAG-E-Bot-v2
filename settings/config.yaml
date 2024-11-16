@@ -1,0 +1,14 @@
+elasticsearch:
+  host: "192.168.1.21"
+  port: 9200
+  http_auth:
+    username: "elastic"
+    password: "ouYs8dnaFC+8zsxMLQhT"
+  index_name: "text_embeddings"
+
+app:
+  host: "http://192.168.1.21:2206"
+
+model:
+  embeddings_model: "models/roberta-embeddings-auto-labeling-tasks"
+  llama_model: "models/Llama-3.2-1B-Instruct-Frog"

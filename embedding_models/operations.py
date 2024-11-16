@@ -1,12 +1,15 @@
 import torch
 from transformers import AutoTokenizer, AutoModel
+from configs.yaml_loader import load_config
+
+config = load_config("settings/config.yaml")
 
 class EmbeddingModel():
     def __init__(self):
-        self.model_name = "Trongdz/roberta-embeddings-auto-labeling-tasks"
-        self.model = AutoModel.from_pretrained(self.model_name)
-        self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
+        self.model_name = config["model"]["embeddings_model"]
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
+        self.model = AutoModel.from_pretrained(self.model_name)
         self.model.to(self.device)
         self.model.eval()
         self.pooling_type = "mean"

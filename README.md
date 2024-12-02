@@ -57,3 +57,4 @@ streamlit run streamlit_app.py
 - Cải thiện độ chính xác của đầu ra khi retrieval
 - Cho phép upsert nhiều loại file (pdf, docs, txt, json ...)
 - Hiện nay chỉ xử lý được pdf text thuần, chưa xử lý được dạng pdf có hình ảnh hoặc icon.
+- Cải thiện giao diện giống ChatGPT

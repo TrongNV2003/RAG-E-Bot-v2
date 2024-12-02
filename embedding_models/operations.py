@@ -1,8 +1,8 @@
 import torch
 from transformers import AutoTokenizer, AutoModel
-from configs.yaml_loader import load_config
+from config.yaml_loader import load_config
 
-config = load_config("settings/config.yaml")
+config = load_config()
 
 class EmbeddingModel():
     def __init__(self):

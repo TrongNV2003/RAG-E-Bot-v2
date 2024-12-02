@@ -5,13 +5,13 @@ from enum import Enum
 from pydantic import BaseModel
 from typing import Optional, Any
 from fastapi.responses import JSONResponse
-from configs.yaml_loader import load_config
+from config.yaml_loader import load_config
 from db.elasticsearch.connector import connect_db
 from embedding_models.operations import EmbeddingModel
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 model = EmbeddingModel()
-config = load_config("settings/config.yaml")
+config = load_config()
 
 class ElasticsearchProvider:
     def __init__(self) -> None:

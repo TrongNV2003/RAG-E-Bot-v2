@@ -2,18 +2,19 @@ import torch
 from embedding_models.operations import EmbeddingModel
 from db.elasticsearch.operations import ElasticsearchProvider
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
-from configs.yaml_loader import load_config
+from config.yaml_loader import load_config
 
 model = EmbeddingModel()
 elasticsearch_provider = ElasticsearchProvider()
+config = load_config()
 
-config = load_config("settings/config.yaml")
 # bnb_config = BitsAndBytesConfig(
 #     load_in_4bit=True,
 #     bnb_4bit_quant_type='nf4',
 #     bnb_4bit_use_double_quant=True,
 #     bnb_4bit_compute_dtype=torch.bfloat16
 # )
+
 class LlmModel():
     def __init__(self):
         model_name = config["model"]["llama_model"]

@@ -3,7 +3,7 @@ import logging
 import traceback
 from fastapi.routing import APIRouter
 from fastapi.responses import JSONResponse
-from configs.yaml_loader import load_config
+from config.yaml_loader import load_config
 from schemas.schemas import InputText, DocumentTypes
 from fastapi import UploadFile, File, status, Request
 from db.elasticsearch.operations import ElasticsearchProvider
@@ -12,7 +12,7 @@ router = APIRouter()
 logger = logging.getLogger()
 elastic_provider = ElasticsearchProvider()
 
-config = load_config("settings/config.yaml")
+config = load_config()
 
 """
 upsert docs

@@ -1,8 +1,8 @@
 import logging
 from elasticsearch import Elasticsearch
-from configs.yaml_loader import load_config
+from config.yaml_loader import load_config
 
-config = load_config("settings/config.yaml")
+config = load_config()
 logger = logging.getLogger("elasticsearch_log")
 
 def connect_db() -> Elasticsearch:

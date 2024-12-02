@@ -1,13 +1,13 @@
 elasticsearch:
-  host: "192.168.1.21"
+  host: "192.168.56.1"  # 192.168.56.1  # 192.168.1.21
   port: 9200
   http_auth:
     username: "elastic"
-    password: "ouYs8dnaFC+8zsxMLQhT"
+    password: "a2XFW5LCbIrqPTA5n9a6"  # a2XFW5LCbIrqPTA5n9a6  # ouYs8dnaFC+8zsxMLQhT
   index_name: "text_embeddings"
 
 app:
-  host: "http://192.168.1.21:2206"
+  host: "http://192.168.56.1:2206"  # http://192.168.56.1:2206  # http://192.168.1.21:2206
 
 model:
   embeddings_model: "models/roberta-embeddings-auto-labeling-tasks"

@@ -1,5 +1,3 @@
-import re
-import io
 import pymupdf
 from enum import Enum
 from pydantic import BaseModel
@@ -68,8 +66,7 @@ class ElasticsearchProvider:
     def splitter(self, text: str):
         docs = []
         text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size = 768,
-            chunk_overlap = 30
+            chunk_size = 512
         )
         chunks = text_splitter.split_text(text)
         for chunk in chunks:
@@ -89,7 +86,7 @@ class ElasticsearchProvider:
         """
         text_embedding = model.embedding_query(query_input)
         query_body = {
-            "size": 3,
+            "size": 10,
             "query": {
                 "bool": {
                     "must": [

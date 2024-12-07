@@ -56,7 +56,10 @@ streamlit run streamlit_app.py
 - Cải thiện độ chính xác khi retrieval
 - Cho phép select và upsert nhiều loại file (pdf, docs, txt, json ...)
 - Hiện nay chỉ xử lý được pdf text thuần, chưa xử lý được dạng pdf có chứa hình ảnh hoặc các loại non-text.
+- Optimize tính cách chatbot (Có thể là option lựa chọn)
+- Cải thiện đọc lại lịch sử trò chuyện (Vấn đề hiện tại là khi lịch sử trò chuyện dài sẽ process lâu)
 
 ### Done feartures
+- Bot đọc được lịch sử trò chuyện của nội dung vừa chat ở trên 
 - Cải thiện giao diện giống ChatGPT (Done)
 - Hiển thị lại lịch sử đã trò truyện (Done)

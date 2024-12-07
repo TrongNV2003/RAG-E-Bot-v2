@@ -129,20 +129,19 @@ def Chatbot_RAG():
             st.sidebar.write("Vui lòng nhập tên index.")
 
 
-def query_processing(query_text, temperature, threshold, api_endpoint):
+def query_processing(query_text, temperature, threshold, api_endpoint, history):
     with st.spinner("Đang xử lý..."):
-        response = requests.post(
-            f"{API_URL}{api_endpoint}",
-            json = {
-                "input": {"text_input": query_text},
-                "params": {"temperature": temperature,
-                            "threshold": threshold}
-            }
-        )
+        payload = {
+            "input": {"text_input": query_text},
+            "params": {"temperature": temperature, "threshold": threshold},
+            "history": {"chat_history": history}
+        }
+        response = requests.post(f"{API_URL}{api_endpoint}", json=payload)
+        
         if response.status_code == 200:
-            bot_response = response.json().get("Answer")
+            bot_response = response.json()["Answer"]
         else:
-            st.write("Lỗi khi call API:", response.status_code)
+            st.write("Lỗi khi call API:", response.status_code, response.text)
     return bot_response
 
 def health_check():
@@ -169,7 +168,7 @@ def main():
         else:
             api_endpoint = "/chatbot-text-query"
             
-        bot_response = query_processing(query_text, temperature, threshold, api_endpoint)
+        bot_response = query_processing(query_text, temperature, threshold, api_endpoint, st.session_state.chat_history)
         if bot_response:
             st.session_state.chat_history.append({"role": "user", "content": query_text})
             st.session_state.chat_history.append({"role": "assistant", "content": bot_response})

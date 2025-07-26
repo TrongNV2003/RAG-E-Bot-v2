@@ -3,20 +3,18 @@ import logging
 import traceback
 from fastapi.routing import APIRouter
 from fastapi.responses import JSONResponse
-from config.yaml_loader import load_config
-from schemas.schemas import InputText, DocumentTypes
 from fastapi import UploadFile, File, status, Request
-from db.elasticsearch.operations import ElasticsearchProvider
+
+from rag.schemas.schemas import InputText
+from rag.db.elasticsearch.operations import ElasticsearchProvider
+from rag.config.setting import elasticsearch_config
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
-logger = logging.getLogger()
 elastic_provider = ElasticsearchProvider()
 
-config = load_config()
-
-"""
-upsert docs
-"""
 
 @router.post("/upsert-text",
             tags=["data manager"],
@@ -36,7 +34,7 @@ async def upsert_labels(request: Request, input: InputText):
                 status_code=status.HTTP_404_NOT_FOUND
             )
         text = input.text_input
-        elastic_provider.upsert_from_text(text, index_name = config["elasticsearch"]["index_name"])
+        elastic_provider.upsert_from_text(text, index_name=elasticsearch_config.index_name)
 
         return {"message": "Labels upserted successfully from file"}
 
@@ -76,7 +74,7 @@ async def upsert_labels_by_file(request: Request, doc_type: str, file_path: Uplo
                 status_code=status.HTTP_404_NOT_FOUND
             )
             
-        elastic_provider.upsert_from_files(file_bytes, doc_type, index_name=config["elasticsearch"]["index_name"])
+        elastic_provider.upsert_from_files(file_bytes, doc_type, index_name=elasticsearch_config.index_name)
 
         return {"message": "Labels upserted successfully from file"}
 
@@ -93,6 +91,7 @@ async def upsert_labels_by_file(request: Request, doc_type: str, file_path: Uplo
             },
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
+
 
 @router.delete("/delete-index",
             tags=["data manager"],

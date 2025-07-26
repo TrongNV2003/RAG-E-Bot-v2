@@ -1,17 +1,9 @@
 import logging
-from pydantic import BaseModel
 from fastapi import Response, status
 from fastapi.routing import APIRouter
 from fastapi.responses import JSONResponse
-from schemas.schemas import HealthCheckResponse
 
-
-class Item(BaseModel):
-    name: str
-    description: str
-
-class Error(BaseModel):
-    detail: str
+from rag.schemas.schemas import HealthCheckResponse
 
 router = APIRouter(tags=["Health Check"])
 logger = logging.getLogger("factoryAI")
@@ -27,7 +19,7 @@ logger = logging.getLogger("factoryAI")
                     "content": {
                         "application/json": {
                             "example": {
-                                "message": "Agent is not initialized"
+                                "message": "Internal Server Error, Agent is not initialized",
                             }
                         }
                     }

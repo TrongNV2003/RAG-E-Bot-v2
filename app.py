@@ -1,19 +1,23 @@
+import os
+import sys
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(current_dir)
 
 import logging
 import uvicorn
 from fastapi import FastAPI
-from db.elasticsearch.operations import ElasticsearchProvider
 
-from routers.chatbot import router as chatbot_router
-from routers.healthcheck import router as healthcheck_router
-from routers.data_manager import router as data_manager_router
+from rag.db.elasticsearch.operations import ElasticsearchProvider
+from rag.routers.queries import router as chatbot_router
+from rag.routers.upsert import router as data_manager_router
+from rag.routers.healthcheck import router as healthcheck_router
 
 logger = logging.getLogger()
 logger = logging.getLogger("app")
 
 app = FastAPI(
-    title="RAG-E Bot",
-    version="1.0.0",
+    title="RAG-E Ver2",
+    version="2.0.0",
     )
 
 elastic_provider = ElasticsearchProvider()

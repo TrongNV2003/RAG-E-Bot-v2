@@ -1,16 +1,19 @@
 import logging
 from elasticsearch import Elasticsearch
-from config.yaml_loader import load_config
 
-config = load_config()
+from rag.config.setting import elasticsearch_config
+
 logger = logging.getLogger("elasticsearch_log")
 
 def connect_db() -> Elasticsearch:
     try:
-        client = Elasticsearch([{"host": config["elasticsearch"]["host"], 
-                                 "port": config["elasticsearch"]["port"], 
+        client = Elasticsearch([{"host": elasticsearch_config.host, 
+                                 "port": elasticsearch_config.port, 
                                  "scheme": "https"}],
-                               http_auth=(config["elasticsearch"]["http_auth"]["username"], config["elasticsearch"]["http_auth"]["password"]), 
+                               http_auth=(
+                                   elasticsearch_config.http_auth.username,
+                                   elasticsearch_config.http_auth.password,
+                                ), 
                                timeout=10, 
                                max_retries=5, 
                                retry_on_timeout=True,
@@ -18,7 +21,6 @@ def connect_db() -> Elasticsearch:
                                ssl_show_warn=False)
 
         return client
-        
     except Exception as e:
         logger.error(f"Failed to connect to Elasticsearch {e}")
         

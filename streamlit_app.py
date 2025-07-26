@@ -1,12 +1,18 @@
+import os
+import sys
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(current_dir)
+
 import requests
 import streamlit as st
-from config.yaml_loader import load_config
 
-config = load_config()
-API_URL = config["app"]["host"]
+from rag.config.setting import elasticsearch_config
+
+api_url = os.getenv("API_URL")
+
 
 st.set_page_config(
-    page_title="RAG-E",
+    page_title="RAG-E Ver2",
     page_icon="🧊",
     # layout="wide",
     initial_sidebar_state="auto",
@@ -46,12 +52,8 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Chatbot params
-st.markdown("# :rainbow[RAG-E v1]")
+st.markdown("# :rainbow[RAG-E version 2.0.0]")
 st.sidebar.header("Chatbot")
-selected_bot = st.sidebar.selectbox("Select chatbot:", 
-                                    options=["Chatbot Basic", "Chatbot RAG"],
-                                    label_visibility="collapsed")
 
 st.sidebar.subheader("Temperature")
 temperature = st.sidebar.slider(
@@ -59,10 +61,10 @@ temperature = st.sidebar.slider(
     min_value=0.0, max_value=1.0, value=0.5, step=0.1,
 )
 
-st.sidebar.subheader("Threshold")
-threshold = st.sidebar.slider(
-    "Độ giới hạn kiến thức retrieval:", 
-    min_value=0.0, max_value=2.0, value=1.0, step=0.2,
+st.sidebar.subheader("Top K")
+top_k = st.sidebar.slider(
+    "Số lượng documents truy xuất:", 
+    min_value=1, max_value=10, value=5, step=1,
 )
 
 def Chatbot_RAG():
@@ -86,8 +88,8 @@ def Chatbot_RAG():
             if input_text:
                 with st.spinner("Đang xử lý..."):
                     response = requests.post(
-                        f"{API_URL}/upsert-text",
-                        json={"index_name": config["elasticsearch"]["index_name"], "text_input": input_text}
+                        f"{api_url}/upsert-text",
+                        json={"index_name": elasticsearch_config.index_name, "text_input": input_text}
                     )
                     if response.status_code == 200:
                         st.sidebar.write("Dữ liệu đã được upsert thành công.")
@@ -95,6 +97,7 @@ def Chatbot_RAG():
                         st.sidebar.write("Lỗi khi gọi API:", response.status_code)
             else:
                 st.write("Vui lòng nhập đầy đủ thông tin.")
+    
     elif selected_upsert == "Upsert file":
         st.sidebar.subheader("Upsert file")
         uploaded_file = st.sidebar.file_uploader("Drag file pdf here:", 
@@ -103,7 +106,7 @@ def Chatbot_RAG():
         if st.sidebar.button("Upsert file"):
             with st.spinner("Đang xử lý..."):
                 response = requests.post(
-                    f"{API_URL}/upsert-file?doc_type={selected_document}",
+                    f"{api_url}/upsert-file?doc_type={selected_document}",
                     files={"file_path": uploaded_file}
                 )
                 if response.status_code == 200:
@@ -119,7 +122,7 @@ def Chatbot_RAG():
     if st.sidebar.button("Xoá Index"):
         if index_to_delete:
             response = requests.delete(
-                f"{API_URL}/delete-index?index_name={index_to_delete}"
+                f"{api_url}/delete-index?index_name={index_to_delete}"
             )
             if response.status_code == 200:
                 st.sidebar.write("Index đã được xoá thành công.")
@@ -129,14 +132,14 @@ def Chatbot_RAG():
             st.sidebar.write("Vui lòng nhập tên index.")
 
 
-def query_processing(query_text, temperature, threshold, api_endpoint, history):
+def query_processing(query_text: str, temperature: float, top_k: int, api_endpoint: str, history: list) -> str:
     with st.spinner("Đang xử lý..."):
         payload = {
             "input": {"text_input": query_text},
-            "params": {"temperature": temperature, "threshold": threshold},
+            "params": {"temperature": temperature, "top_k": top_k},
             "history": {"chat_history": history}
         }
-        response = requests.post(f"{API_URL}{api_endpoint}", json=payload)
+        response = requests.post(f"{api_url}{api_endpoint}", json=payload)
         
         if response.status_code == 200:
             bot_response = response.json()["Answer"]
@@ -148,7 +151,7 @@ def health_check():
     st.sidebar.markdown("---")
     st.sidebar.header("Health Check")
     if st.sidebar.button("Kiểm tra trạng thái"):
-        response = requests.get(f"{API_URL}/healthz")
+        response = requests.get(f"{api_url}/healthz")
         if response.status_code == 200:
             st.sidebar.write("I am fine! 👍🏻")
         else:
@@ -163,12 +166,10 @@ def main():
         
     query_text = st.chat_input("Ask RAG-E something...")
     if query_text:
-        if selected_bot == "Chatbot RAG":
-            api_endpoint = "/chatbot-retrieval-query"
-        else:
-            api_endpoint = "/chatbot-text-query"
-            
-        bot_response = query_processing(query_text, temperature, threshold, api_endpoint, st.session_state.chat_history)
+        api_endpoint = "/chatbot-retrieval-query"
+
+
+        bot_response = query_processing(query_text, temperature, top_k, api_endpoint, st.session_state.chat_history)
         if bot_response:
             st.session_state.chat_history.append({"role": "user", "content": query_text})
             st.session_state.chat_history.append({"role": "assistant", "content": bot_response})
@@ -185,13 +186,5 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
-    # Display UI selectors
-    if selected_bot == "Chatbot RAG":
-        Chatbot_RAG()
-    
-    # Health check
+    Chatbot_RAG()
     health_check()
-    
-
-# streamlit run streamlit_app.py

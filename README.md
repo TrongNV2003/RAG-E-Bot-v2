@@ -54,10 +54,12 @@ python app.py
 ### UI
 Streamlit được sử dụng để xây dựng UI cho model:
 ```sh
+cd rag/
 streamlit run streamlit_app.py
 ```
 or
 ```sh
+cd rag/
 $(python -c "import sys; print(sys.executable)") -m streamlit run streamlit_app.py
 ```
 

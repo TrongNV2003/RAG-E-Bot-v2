@@ -5,7 +5,7 @@
 - Update Prompt template giúp LLM phản hồi tốt hơn
 - Refactor upsert, retrieval tăng tốc quá trình inference
 
-Chatbot Retrieval-Augmented Generation (RAG) áp dụng ElasticSearch là một hệ thống trả lời câu hỏi tận dụng khả năng vector store và vector search của ElasticSearch để truy xuất thông tin có liên quan và sức mạnh tạo ngôn ngữ tự nhiên của mô hình Qwen3. Chatbot này có thể xử lý các truy vấn phức tạp bằng cách kết hợp truy xuất dữ liệu với các phản hồi do AI tạo ra trôi chảy và có nhận thức về ngữ cảnh.
+Chatbot Retrieval-Augmented Generation (RAG) áp dụng ElasticSearch là một hệ thống chatbot tận dụng khả năng vector store và vector search của ElasticSearch để truy xuất thông tin có liên quan và sức mạnh tạo ngôn ngữ tự nhiên của mô hình Qwen3. Chatbot này có thể xử lý các truy vấn phức tạp bằng cách kết hợp truy xuất dữ liệu với các phản hồi do AI tạo ra.
 
 - Llama models for chatbot: 
     + [Qwen/Qwen3-4B-AWQ](https://huggingface.co/Qwen/Qwen3-4B-AWQ)     ***NEW***
